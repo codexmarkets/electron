@@ -1,0 +1,3 @@
+electron.exe is the executable that will launch the file
+
+all relevant files containing html/css/javascript code for building the UI are contained in /resources/app
