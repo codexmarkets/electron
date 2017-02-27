@@ -1,0 +1,15 @@
+<?php
+
+$mysqli = new mysqli("localhost","root","atp1991nkt", "test");
+if (mysqli_connect_errno()) { printf("Connect failed: %s\n", mysqli_connect_error()); exit(); }
+$query = "SELECT * FROM test";
+$res = $mysqli->query($query);
+$data = array();
+while($rec = $res->fetch_array(MYSQL_ASSOC))
+{
+		$data[] = $rec;
+}
+echo json_encode($data);
+$res->close(); $mysqli->close();
+
+?>

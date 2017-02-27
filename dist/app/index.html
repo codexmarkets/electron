@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <link href="app/css/photon.css" rel="stylesheet" type="text/css">
+      <link href="app/css/webix.css" rel="stylesheet" type="text/css"charset="utf-8">
+      <script src="app/scripts/webix.js" type="text/javascript" charset="utf-8"></script>
+      <script src="app/api.php" type="text/php"></script>
+      <!-- <link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css"> 
+      <script src="http://cdn.webix.com/edge/webix.js" type="text/javascript"></script> -->  
+   </head>
+   
+   <body>
+         <div id="box" style="width:1000px;height:800px;"></div>
+   
+         <script type="text/javascript" charset="utf-8">
+         webix.ready(function(){
+
+            //main data table
+            var table = new webix.ui({
+              width:1000,
+				  container:"box",
+				  rows: [ 
+				     {
+				        view:"datatable",
+				        id:"datatable",
+   				        columns:[
+      					    { id:"data0",	header:"Row", css:"rank", width:50, sort:"int"},
+					          { id:"data1",	header:"Timestamp",width:130},
+					          { id:"data2",	editor:"text", header:["OrderID", {content:"textFilter"}], width:100},
+					          { id:"data3",	editor:"text", header:["Symbol", {content:"textFilter"}], width:100},
+					          { id:"data4",	editor:"text", header:["State", {content:"selectFilter"}], width:100},
+					          { id:"data5",	editor:"text", header:["Side", {content:"selectFilter"}], width:100},
+					          { id:"data6",	editor:"text", header:["Quantity", {content:"numberFilter"}], width:100},
+					          { id:"data7",	editor:"text", header:["Price", {content:"numberFilter"}], width:100},
+					          { id:"data8",	editor:"text", header:["Account", {content:"selectFilter"}], width:100},
+					          { id:"data9",	header:["MinQuantity", {content:"numberFilter"}], width:100}
+				           ],
+				           autoheight:false,
+				           autowidth:true,
+				           editable:true,
+				           editaction:"click",
+				           select:"row",
+				           multiselect:true,
+				           blockselect:true,
+				           navigation:true,
+   				        datatype:"csv",
+   				        url:"app/data/Data.csv", 
+   				        on:{      
+                        onAfterContextMenu:function(id,e,node) {
+                        webix.delay(function(){this.select(id.row, false)}, this)
+                        }
+                       }
+				           //data:'1,GOOG,09:30:01.123456,678790\n2,AAPL,09:34:01.123456,511495'
+				     }
+				  ]
+			   });
+			   
+			   function msg() {
+			   	alert("test msg");
+			   };
+			   
+			   
+			   //gets value of a cell in selected row
+			   var table_click = $$("datatable").attachEvent("onAfterSelect", function (data, preserve) {
+			      var row_orderID = this.getSelectedItem().data2;
+			      //alert(row_orderID);
+			      //msg();
+			   });
+			   
+			
+			   //menu that shows up when you right click on the data table
+			   var r_click_menu = new webix.ui({
+               view:"contextmenu",
+               id:"r_click_menu",
+               data:[
+                  "View Details",
+                  "Cancel",
+                  "Reject",
+                  "Bust"
+               ]
+            });
+            
+            $$("r_click_menu").attachTo($$("datatable"));
+            
+            
+            //event handler for selecting option on the right click menu
+            var table_r_click = $$("r_click_menu").attachEvent("onItemClick", function () {
+            	wind_ow.show();
+            });
+            
+            //secondary window
+            var wind_ow = new webix.ui({
+               view:"window",
+               id:"window",
+               move:true,
+               resize:true,
+               width:400,
+               height:500,
+               top:200,
+               left:200,
+               head:{
+                  view:"toolbar", 
+                  cols:[
+                     {view:"label", label: "Test Window" },
+						   {view:"button", id:"close_button", label: 'Close', width: 100, align: 'right'}
+						   //{view:"button", id:"close_button", label: 'Close', width: 100, align: 'right', click:"$$('window').close();"}
+						]
+               },
+               body:{
+                  view:"datatable",
+                  columns:[
+      					    { id:"data0",	header:"Row", css:"rank", width:50, sort:"int"},
+					          { id:"data1",	header:"Symbol",width:150}
+					   ],
+					   datatype:"csv",
+				      data:'1,GOOG\n2,AAPL',
+				      select:true
+               }
+               
+            });
+            
+            $$("close_button").attachEvent("onItemClick", function () {
+            	$$("window").hide();
+            });
+            
+            //wind_ow.show();
+            
+            //test third window for server-side integration
+            var wind_ow_2 = new webix.ui({
+               view:"window",
+               id:"window2",
+               move:true,
+               resize:true,
+               body:{
+                  view:"datatable",
+                  columns:[
+      					    { id:"data0",	header:"Row", css:"rank", width:50, sort:"int"},
+					          { id:"data1",	header:"Symbol",width:150}
+					   ],
+					   datatype:"csv",
+				      data:'1,GOOG\n2,AAPL',
+				      select:true
+               
+               /*body:{
+                  view:"datatable",
+                  columns:[
+                     {id:"id"},
+                     {id:"name"}
+                  ],
+                  /*columns:[
+					       { id:"rank",	header:"", width:50},
+					       { id:"title",	header:"Film title",width:200},
+					       { id:"year",	header:"Released" , width:80},
+					       { id:"votes",	header:"Votes", 	width:100}
+				      ],*/
+                  //url:"app/server/datatable.php"
+                  //url:"app/server/data.php"
+                  //datatype:"json"
+               }
+               //body:{template:"test"}
+            });
+            
+            wind_ow_2.show();
+            
+			});
+			
+			
+         </script>
+   </body>
+</html>

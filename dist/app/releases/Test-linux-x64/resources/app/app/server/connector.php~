@@ -1,0 +1,5 @@
+//prepare data connector
+require_once("server/data.php");
+$dbtype = "MySQL";
+$conn = mysql_connect(localhost, "ericz", "atp1991nkt");
+$data = new JSONDataConnector($conn, $dbtype);

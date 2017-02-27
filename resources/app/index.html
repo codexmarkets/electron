@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <link href="./app/css/photon.css" rel="stylesheet" type="text/css">
+      <link href="./app/css/webix.css" rel="stylesheet" type="text/css"charset="utf-8">
+      <script src="./app/scripts/webix.js" type="text/javascript" charset="utf-8"></script>
+   </head>
+   
+   <body>
+         <div id="box" style="width:1000px;height:800px;"></div>
+   
+         <script type="text/javascript" charset="utf-8">
+         webix.ready(function(){
+
+            //main data table
+            var table = new webix.ui({
+              width:1000,
+				  container:"box",
+				  rows: [ 
+				     {
+				        view:"datatable",
+				        id:"datatable",
+   				        columns:[
+					          { id:"row",	header:"Row", css:"rank", width:50, sort:"int"},
+					          { id:"timestamp",	header:"Timestamp",width:130},
+					          { id:"orderid",	editor:"text", header:["OrderID", {content:"textFilter"}], width:100},
+					          { id:"symbol",	editor:"text", header:["Symbol", {content:"textFilter"}], width:100},
+					          { id:"state",	editor:"text", header:["State", {content:"selectFilter"}], width:100},
+					          { id:"side",	editor:"text", header:["Side", {content:"selectFilter"}], width:100},
+					          { id:"quantity",	editor:"text", header:["Quantity", {content:"numberFilter"}], width:100},
+					          { id:"price",	editor:"text", header:["Price", {content:"numberFilter"}], width:100},
+					          { id:"account",	editor:"text", header:["Account", {content:"selectFilter"}], width:100},
+					          { id:"minquantity",	header:["MinQuantity", {content:"numberFilter"}], width:100}
+				           ],
+				           autoheight:false,
+				           autowidth:true,
+				           editable:true,
+				           editaction:"click",
+				           select:"row",
+				           multiselect:false,
+				           blockselect:false,
+				           navigation:true,
+   				        //url:"./app/data/Data.csv",
+							  //datatype:"csv",
+   				        url:"http://localhost:8080/data2",
+   				        //save:"http://localhost:8080/save_data2",
+   				        datatype:'json',
+   				        on:{      
+                        onAfterContextMenu:function(id,e,node) {
+                        webix.delay(function(){this.select(id.row, false)}, this)
+                        }
+                       }
+				     }
+				  ]
+			   });
+			
+			   //menu that shows up when you right click on the data table
+			   var r_click_menu = new webix.ui({
+               view:"contextmenu",
+               id:"r_click_menu",
+               data:[
+                  "View Details",
+                  "Cancel",
+                  "Reject",
+                  "Bust"
+               ]
+            });
+            $$("r_click_menu").attachTo($$("datatable"));
+            
+            
+            //event handler for selecting option on the right click menu
+				var row_orderID = '50';
+            
+            var table_r_click = $$("r_click_menu").attachEvent("onItemClick", function (id) {
+            	$$("datatable").refresh();
+            	//take action depending on type of menu option selected
+            	var menu_clicked = this.getItem(id).value;
+            	switch(menu_clicked){
+            		case 'View Details':
+            		
+							//update order details window
+							row_orderID = $$("datatable").getSelectedItem().orderid;
+					
+							$$("label1").define("label", test1.concat(row_orderID));
+							$$('label1').refresh();
+					
+							drilldown_values[0].field_value = row_orderID;
+							$$("list2").define("data", drilldown_values);
+							$$('list2').refresh();            		
+            		
+            			if (!wind_ow_2.isVisible()){
+            				wind_ow_2.show();
+            			}
+							break;
+							
+						case 'Cancel':
+							row_id = $$("datatable").getSelectedItem().id;					
+							$$("datatable").remove(row_id);
+							break;
+							
+            		default: 
+            			webix.message(menu_clicked); break;
+            	}
+            });
+				
+            
+            //window that shows up after selecting option on the right click menu
+				var drilldown_fields = [
+					{field:"OrderId"},
+					{field:"Symbol"},
+					{field:"Side"},
+					{field:"Price"},
+					{field:"Quantity"},
+					{field:"Account"},
+					{field:"Timestamp"},
+					{field:"MinQty"},
+					{field:"MaxFloor"},
+					{field:"Firm"}
+				];
+				
+				var drilldown_values = [
+					{field_value:"123456"},
+					{field_value:"MSFT"},
+					{field_value:"Buy"},
+					{field_value:"63.40"},
+					{field_value:"10000"},
+					{field_value:"CLIENT1"},
+					{field_value:"10:00:00.123342"},
+					{field_value:"2000"},
+					{field_value:"5000"},
+					{field_value:"ABCD"}
+				];            
+            
+				var test1 = "Order id: ";         
+            
+            var wind_ow_2 = new webix.ui({
+               view:"window",
+               id:"window2",
+               move:true,
+               resize:true,
+               width:800,
+               height:500,
+               head:
+               	{
+                  	view:"toolbar",
+                  	id:"toolbar",
+                  	cols:[
+                     	{
+                     		rows:[
+                     			{
+                     				cols:[
+                     					{view:"label", label: "Account: CLIENT1"},
+                     					{view:"button", id:"close_button", label: 'Close', align: 'right', 
+                     					width:100, click:"$$('window2').hide();"}
+                     				]
+                     			},
+                     			//{view:"label", label: "Order id: 123456"},
+                     			{view:"label", id: "label1", label: "Order id: 123456"},
+                     			{view:"label", label: "Percent Complete: 30%"}
+                     		]
+                     	},
+							]
+               	},
+               body: {
+               	cols:[
+               		{
+               			rows:[
+               				{
+                 					view:"datatable",
+                 					id:"datatable_test",
+                 					columns:[
+				                    	{id:"row", header: "row"},
+	                    				{id:"name", header: "name", editor:"text"}
+                 					],
+                 					editable:true,
+				           			editaction:"click",
+                 					url:"http://localhost:8080/data",
+                 					save:"http://localhost:8080/save_data",
+   			  						datatype:'json',
+   			  						on:{      
+                        			onAfterContextMenu:function(id,e,node) {
+                        			webix.delay(function(){this.select(id.row, false)}, this)
+                        			}
+                       			},
+                       			select:"row"
+   			  					}
+   			  				]
+   			  			},
+   			  			{
+   			  				cols:[
+   			  					{
+   			  						view:"list",
+   			  						id:"list1",
+   			  						template:"#field#",
+				      				data:drilldown_fields,
+   			  					},
+   			  					{
+   			  						view:"list",
+   			  						id:"list2",
+   			  						template:"#field_value#",
+				      				data:drilldown_values,
+   			  					},
+   			  				]
+   			  			}
+   			  		]
+               }
+               
+            });
+            
+            var r_click_menu_test = new webix.ui({
+               view:"contextmenu",
+               id:"r_click_menu_test",
+               data:[
+                  "Cancel",
+                  "Add"
+               ]
+            });
+            $$("r_click_menu_test").attachTo($$("datatable_test"));
+            
+            
+            var table_r_click = $$("r_click_menu_test").attachEvent("onItemClick", function (id) {
+
+            	//take action depending on type of menu option selected
+            	var menu_clicked = this.getItem(id).value;
+            	switch(menu_clicked){
+							
+						case 'Cancel':
+							row_id = $$("datatable_test").getSelectedItem().id;					
+							$$("datatable_test").remove(row_id);
+							break;
+							
+						case 'Add':
+							$$("datatable_test").add({row:5, name:"Test"});
+							break;
+							
+            		default: 
+            			webix.message(menu_clicked);
+            			break;
+            	}
+            });
+            
+			});
+			
+			
+         </script>
+   </body>
+</html>

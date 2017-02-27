@@ -1,0 +1,51 @@
+{
+  "name": "Test",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-react": "^6.23.0",
+    "electron-packager": "^8.5.2",
+    "electron-prebuilt-compile": "1.4.15"
+  },
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "electron-compile": "^6.1.2",
+    "electron-prebuilt-compile": "1.4.15",
+    "express": "^4.14.1",
+    "server-static": "^1.5.0"
+  },
+  "scripts": {
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {},
+      "electronWinstallerConfig": {
+        "name": ""
+      },
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {},
+      "github_repository": {
+        "owner": ""
+      },
+      "windowsStoreConfig": {
+        "packageName": ""
+      }
+    }
+  }
+}
