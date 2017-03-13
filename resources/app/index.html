@@ -13,6 +13,18 @@
    
          <script type="text/javascript" charset="utf-8">
          webix.ready(function(){
+         
+         	//location of database server
+         	var server_ = 'localhost';
+         	var port_ = ':8080';
+         	var protocol_ = 'http://';         	
+         	var url_ = protocol_ + server_ + port_;
+         	
+         	//a function that runs every 500 milliseconds
+         	/*setInterval(function(){
+         		var d = new Date();
+         		webix.message('hi'+d.getMilliseconds());
+         		}, 500);*/
 
             //main data table
             var table = new webix.ui({
@@ -42,10 +54,8 @@
 				           multiselect:false,
 				           blockselect:false,
 				           navigation:true,
-   				        //url:"./app/data/Data.csv",
-							  //datatype:"csv",
-   				        url:"http://localhost:8080/data2",
-   				        //save:"http://localhost:8080/save_data2",
+   				        url:url_ + '/main_data',
+   				        //save:url_ + "/save_main_data",
    				        datatype:'json',
    				        on:{      
                         onAfterContextMenu:function(id,e,node) {
@@ -68,6 +78,17 @@
                ]
             });
             $$("r_click_menu").attachTo($$("datatable"));
+            
+            
+            //menu that shows up to confirm a cancel, reject, or bust selection
+            var r_click_menu_confirm = new webix.ui({
+               view:"window",
+               id:"window3",
+               move:true,
+               resize:true,
+               width:800,
+               height:500
+              });
             
             
             //event handler for selecting option on the right click menu
@@ -96,6 +117,8 @@
 							break;
 							
 						case 'Cancel':
+							r_click_menu_confirm.show();
+							break;
 							row_id = $$("datatable").getSelectedItem().id;					
 							$$("datatable").remove(row_id);
 							break;
@@ -156,7 +179,6 @@
                      					width:100, click:"$$('window2').hide();"}
                      				]
                      			},
-                     			//{view:"label", label: "Order id: 123456"},
                      			{view:"label", id: "label1", label: "Order id: 123456"},
                      			{view:"label", label: "Percent Complete: 30%"}
                      		]
@@ -176,8 +198,8 @@
                  					],
                  					editable:true,
 				           			editaction:"click",
-                 					url:"http://localhost:8080/data",
-                 					save:"http://localhost:8080/save_data",
+                 					url:url_ + "/data",
+                 					save: url_ + "/save_data",
    			  						datatype:'json',
    			  						on:{      
                         			onAfterContextMenu:function(id,e,node) {
